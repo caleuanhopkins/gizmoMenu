@@ -1,0 +1,66 @@
+$menuSelector: '#theMenu';
+$menuWidth: 75%;
+$animationDuration: 350;
+$responsiveView: 480px;
+
+header{
+	.mobileNav{
+		display:none;
+	}
+}
+
+@media only screen and (max-width: #{$responsiveView}) {
+
+	body{
+		position:relative;
+		overflow:hidden;
+
+		&.slideInLeft{
+			transition: left #{$animationDuration}ms ease-in-out;
+			left:0;
+			&.animateIn{
+				left:#{$menuWidth};
+			}
+		}
+
+		&.slideInRight{
+			transition: right #{$animationDuration}ms ease-in-out;
+			right:0;
+			&.animateIn{
+				right:#{$menuWidth};
+			}
+		}
+	}
+	
+	header{
+		
+		nav{
+			&#{$menuSelector}{
+				top:0;
+				position:absolute;
+				z-index:-1;
+				height:100%;
+				li{
+					width: 100%;
+					display:block;
+					clear: both;
+				}
+			}
+
+			&.gz-resp-menu{
+				left: -#{$menuWidth};
+				width: #{$menuWidth};
+			}
+
+			&.gz-opposite{
+				left:inherit;
+				right: -#{$menuWidth};
+			}
+		}
+		
+		.mobileNav{
+			display:block;
+		}
+	}
+
+}
