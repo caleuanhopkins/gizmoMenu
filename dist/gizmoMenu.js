@@ -18,6 +18,8 @@
             navListClass: 'clsPrpnd',
             mobileNavButton: '#gizmoRespButton',
             prependClose: '<li><a id="gizmoMenuClose" href="#">close</a></li>',
+            mobileMenuWrapper: 'header',
+            mobileMenuFollowClass: 'gzPeek',
             movementMinDistance: '0%'
 		};
 
@@ -40,6 +42,10 @@
 			this.theLinks = this.theMenu.find('a');
 			this.settings.mobileNavButton = $(this.settings.mobileNavButton);
 			this.settings.prependClose = $(this.settings.prependClose);
+			this.settings.mobileMenuWrapper = $(this.settings.mobileMenuWrapper);
+
+			this.settings.iScrollPos = 0;
+			this.settings.iCurScrollPos = 0;
 
             this.settings.theDist = parseInt(this.settings.mobileMenuWidth) - 1;
             this.settings.moveDist = this.settings.theDist+this.settings.mobileMenuWidth.replace(/[1-9]/g,'');
@@ -51,16 +57,39 @@
 			});
 
 			this.watchAnimate(this.theMenu, this.elemBody, this.theLinks, this.settings);
+
+			this.settings.mobileMenuWrapperTop = this.settings.mobileMenuWrapper.offset().top;
+			this.settings.mobileMenuWrapperHeight = this.settings.mobileMenuWrapper.outerHeight();
+
+			$(window).scroll(function(){
+				$that.peekMenu($that.theMenu, $that.elemBody, $that.settings, $(this));
+			});
+		},
+
+		peekMenu: function (theMenu, theBody, options, scrollElm){
+			options.iCurScrollPos = scrollElm.scrollTop();
+		    if (options.iCurScrollPos > options.iScrollPos) {
+			    options.mobileMenuWrapper.css('position', 'static').css('height', 'auto').removeClass(options.mobileMenuFollowClass);
+		    } else {
+		    	if($(window).scrollTop() > (options.mobileMenuWrapperTop + options.mobileMenuWrapperHeight)){
+			       	options.mobileMenuWrapper.css('position', 'fixed').addClass(options.mobileMenuFollowClass);
+			    }else{
+			       	options.mobileMenuWrapper.css('position', 'static').css('height', 'auto').removeClass(options.mobileMenuFollowClass);
+			    }
+		    }
+		    options.iScrollPos = options.iCurScrollPos;
 		},
 
 		watchAnimate: function (theMenu, theBody, theLinks, options) {
 			var that = this;
             options.mobileNavButton.on('click', function(){
             	that.slideIn(theMenu, theBody, options);
+            	return false;
             });
 
             options.prependClose.on('click', function(){
 				that.slideOut(theMenu, theBody, options);
+				return false;
             });
 
             theLinks.on('click', function(){
@@ -73,9 +102,9 @@
             	options.prependClose.prependTo(theMenu.find('.'+options.navListClass).addBack('.'+options.navListClass));
             	if(!options.cssAnimate){
             		if(options.slideDirection === 'left'){
-            			theBody.animate({left: options.moveDist},options.animationDuration);
+            			theBody.css('overflow-y','hidden').animate({left: options.moveDist},options.animationDuration);
             		}else{
-            			theBody.animate({right: options.moveDist},options.animationDuration);
+         				theBody.css('overflow-y','hidden').animate({right: options.moveDist},options.animationDuration);
             		}
             	}else{
             		theBody.addClass('animateIn');
@@ -88,9 +117,9 @@
             	options.closeBtn = theMenu.find('.'+options.navListClass).addBack('.'+options.navListClass).prepend(options.prependClose);
             	if(!options.cssAnimate){
             		if(options.slideDirection === 'left'){
-            			theBody.animate({left: 0},options.animationDuration);
+         				theBody.css('overflow-y','auto').animate({left: 0},options.animationDuration);
             		}else{
-						theBody.animate({right: 0},options.animationDuration);
+         				theBody.css('overflow-y','auto').animate({right: 0},options.animationDuration);
             		}
             	}else{
             		theBody.removeClass('animateIn');
@@ -113,7 +142,6 @@
         	}else{
         		if(options.mobileNavButton.is(':visible')){
 	                theMenu.addClass('gz-resp-menu');
-	                console.log(options);
 	                if(options.slideDirection === 'left'){
 	                	theBody.addClass('slideInLeft');
 	            	}else{

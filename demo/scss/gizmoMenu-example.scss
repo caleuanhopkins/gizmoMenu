@@ -91,7 +91,50 @@ html, body, body, button, h1, h2, h3, h4, h5, h6, input, input[type="button"], i
 	  -moz-osx-font-smoothing: grayscale;
 }
 
+$font-family: Helvetica, Arial, sans-serif;
+$default-font-size: 16; //Default
+
+@mixin font-size($sizeValue: 1.6) {
+  font-size: ($sizeValue * 10) + px;
+  font-size: $sizeValue + rem;
+}
+
+@function strip-unit($num) {
+  @return $num / ($num * 0 + 1);
+}
+
+@mixin rem-fallback($property, $values...) {
+  $context: $default-font-size;
+  $max: length($values);
+  $pxValues: '';
+  $remValues: '';
+
+  @for $i from 1 through $max {
+    $value: strip-unit(nth($values, $i));
+    $pxValues: #{$pxValues + $value}px;
+
+    @if $i < $max {
+      $pxValues: #{$pxValues + " "};
+    }
+  }
+
+  @for $i from 1 through $max {
+    $value: strip-unit(nth($values, $i));
+    $remValues: #{$remValues + $value/$context}rem;
+
+    @if $i < $max {
+      $remValues: #{$remValues + " "};
+    }
+  }
+
+  #{$property}: $pxValues;
+  #{$property}: $remValues;
+}
+
 header{
+
+	@include rem-fallback(padding-bottom, 50);
+
 	nav{
 		&#theMenu{
 
@@ -110,6 +153,17 @@ header{
 
 		}
 	}
+
+    &.gzPeek{
+      top:0;
+      @include rem-fallback(padding, 25, 0);
+      border-bottom:1px solid $color-hr;
+    }
+}
+
+#main{
+	height:2000px;
+	display:block;
 }
 
 @media only screen and (max-width: 480px) {

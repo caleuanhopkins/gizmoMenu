@@ -1,7 +1,7 @@
 $menuSelector: '#theMenu';
 $menuWidth: 75%;
 $animationDuration: 350;
-$responsiveView: 480px;
+$responsiveView: 585px;
 
 header{
 	.mobileNav{
@@ -13,12 +13,13 @@ header{
 
 	body{
 		position:relative;
-		overflow:hidden;
+		overflow-x:hidden;
 
 		&.slideInLeft{
 			transition: left #{$animationDuration}ms ease-in-out;
 			left:0;
 			&.animateIn{
+				overflow:hidden;
 				left:#{$menuWidth};
 			}
 		}
@@ -33,17 +34,31 @@ header{
 	}
 	
 	header{
+
+		z-index:9999;
+		transition: all .4s ease-in-out;
+		top:-100%;
 		
 		nav{
 			&#{$menuSelector}{
 				top:0;
 				position:absolute;
 				z-index:-1;
-				height:100%;
+				height:10000px;
 				li{
 					width: 100%;
 					display:block;
 					clear: both;
+				}
+
+				&:after{
+					clear:both;
+					content:'&nbsp;';
+					height:1px;
+					width:1px;
+					visibility:hidden;
+					display:block;
+					font-size:0;
 				}
 			}
 
