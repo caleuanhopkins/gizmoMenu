@@ -4,6 +4,9 @@ $animationDuration: 350;
 $responsiveView: 585px;
 
 header{
+
+	z-index: 9999;
+
 	.mobileNav{
 		display:none;
 	}
